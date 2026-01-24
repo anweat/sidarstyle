@@ -1,52 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Innovation-kun 系统架构 - 功能流程版本</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 40px 20px; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container { 
-            background: white; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
-            padding: 30px; 
-            max-width: 1800px; 
-            width: 100%; 
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
-        .title { 
-            text-align: center; 
-            font-size: 26px; 
-            font-weight: 700; 
-            color: #1565C0; 
-            margin-bottom: 4px; 
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            max-width: 1800px;
+            width: 100%;
         }
-        .subtitle { 
-            text-align: center; 
-            color: #666; 
-            margin-bottom: 20px; 
-            font-size: 13px; 
+
+        .title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1565C0;
+            margin-bottom: 4px;
         }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
         .architecture-container {
             display: flex;
             gap: 20px;
             position: relative;
         }
-        .main-architecture { 
+
+        .main-architecture {
             flex: 1;
-            display: flex; 
-            flex-direction: column; 
-            gap: 0; 
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
+
         .monitoring-panel {
             width: 300px;
             display: flex;
@@ -54,132 +66,187 @@
             gap: 0;
             min-height: 100%;
         }
-        .layer { 
-            border: 2px solid; 
-            display: flex; 
-            flex-direction: column; 
-            transition: all 0.3s ease; 
+
+        .layer {
+            border: 2px solid;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
             position: relative;
         }
-        .layer:hover { 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.08); 
+
+        .layer:hover {
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
         }
-        .layer-header { 
-            display: flex; 
-            align-items: center; 
-            height: 60px; 
-            padding: 0 25px; 
-            border-bottom: 1px solid rgba(0,0,0,0.1); 
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            padding: 0 25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
-        .layer-icon { 
-            font-size: 26px; 
-            margin-right: 15px; 
-            min-width: 40px; 
+
+        .layer-icon {
+            font-size: 26px;
+            margin-right: 15px;
+            min-width: 40px;
         }
-        .layer-title { 
-            font-size: 15px; 
-            font-weight: 700; 
+
+        .layer-title {
+            font-size: 15px;
+            font-weight: 700;
         }
-        .layer-modules { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 10px; 
-            padding: 16px 22px; 
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 100%);
+
+        .layer-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 16px 22px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
-        .module-group { 
+
+        .module-group {
             border-left: 4px solid;
-            border-radius: 10px; 
-            padding: 11px; 
-            background: rgba(255,255,255,0.25); 
+            border-radius: 10px;
+            padding: 11px;
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
         }
-        .module-group:hover { 
-            background: rgba(255,255,255,0.35); 
+
+        .module-group:hover {
+            background: rgba(255, 255, 255, 0.35);
             box-shadow: 0 12px 32px rgba(31, 38, 135, 0.2);
             transform: translateY(-4px) translateX(4px);
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
-        .module-group-title { 
-            font-size: 13px; 
-            font-weight: 700; 
-            margin-bottom: 6px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.7px; 
-            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+
+        .module-group-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
         }
-        .module-items { 
-            font-size: 13px; 
-            line-height: 1.4; 
+
+        .module-items {
+            font-size: 13px;
+            line-height: 1.4;
             font-weight: 500;
         }
-        .module-items div { 
-            margin-bottom: 3px; 
+
+        .module-items div {
+            margin-bottom: 3px;
         }
+
         /* 功能流程颜色 - 玻璃态设计 */
-        .flow-try-on { 
+        .flow-try-on {
             border-left-color: #FF6B6B;
             background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 179, 179, 0.1));
         }
-        .flow-try-on .module-group-title { color: #C92A2A; font-weight: 700; }
-        .flow-try-on .module-items { color: #A61E4D; }
-        
-        .flow-generate { 
+
+        .flow-try-on .module-group-title {
+            color: #C92A2A;
+            font-weight: 700;
+        }
+
+        .flow-try-on .module-items {
+            color: #A61E4D;
+        }
+
+        .flow-generate {
             border-left-color: #4ECDC4;
             background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(123, 229, 217, 0.1));
         }
-        .flow-generate .module-group-title { color: #1B7A70; font-weight: 700; }
-        .flow-generate .module-items { color: #0B4F45; }
-        
-        .flow-recommend { 
+
+        .flow-generate .module-group-title {
+            color: #1B7A70;
+            font-weight: 700;
+        }
+
+        .flow-generate .module-items {
+            color: #0B4F45;
+        }
+
+        .flow-recommend {
             border-left-color: #45B7D1;
             background: linear-gradient(135deg, rgba(69, 183, 209, 0.15), rgba(144, 202, 249, 0.1));
         }
-        .flow-recommend .module-group-title { color: #264653; font-weight: 700; }
-        .flow-recommend .module-items { color: #1A3A52; }
-        
-        .flow-chat { 
+
+        .flow-recommend .module-group-title {
+            color: #264653;
+            font-weight: 700;
+        }
+
+        .flow-recommend .module-items {
+            color: #1A3A52;
+        }
+
+        .flow-chat {
             border-left-color: #F8B500;
             background: linear-gradient(135deg, rgba(248, 181, 0, 0.15), rgba(255, 213, 79, 0.1));
         }
-        .flow-chat .module-group-title { color: #B59500; font-weight: 700; }
-        .flow-chat .module-items { color: #704D00; }
-        
-        .flow-user { 
+
+        .flow-chat .module-group-title {
+            color: #B59500;
+            font-weight: 700;
+        }
+
+        .flow-chat .module-items {
+            color: #704D00;
+        }
+
+        .flow-user {
             border-left-color: #95E1D3;
             background: linear-gradient(135deg, rgba(149, 225, 211, 0.15), rgba(165, 240, 228, 0.1));
         }
-        .flow-user .module-group-title { color: #38A169; font-weight: 700; }
-        .flow-user .module-items { color: #22543D; }
-        
-        .flow-common { 
+
+        .flow-user .module-group-title {
+            color: #38A169;
+            font-weight: 700;
+        }
+
+        .flow-user .module-items {
+            color: #22543D;
+        }
+
+        .flow-common {
             border-left-color: #A8DADC;
             background: linear-gradient(135deg, rgba(168, 218, 220, 0.15), rgba(203, 239, 241, 0.1));
         }
-        .flow-common .module-group-title { color: #457B9D; font-weight: 700; }
-        .flow-common .module-items { color: #1D3557; }
 
-        .connection { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 18px; 
-            color: #1976D2; 
-            font-size: 11px; 
-            font-weight: 500; 
-            background: linear-gradient(90deg, transparent 0%, rgba(25,118,210,0.05) 50%, transparent 100%); 
+        .flow-common .module-group-title {
+            color: #457B9D;
+            font-weight: 700;
         }
-        .connection::before { 
-            content: '↓'; 
-            margin: 0 6px; 
+
+        .flow-common .module-items {
+            color: #1D3557;
+        }
+
+        .connection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 18px;
+            color: #1976D2;
+            font-size: 11px;
+            font-weight: 500;
+            background: linear-gradient(90deg, transparent 0%, rgba(25, 118, 210, 0.05) 50%, transparent 100%);
+        }
+
+        .connection::before {
+            content: '↓';
+            margin: 0 6px;
             font-size: 14px;
         }
 
@@ -188,7 +255,7 @@
             background: linear-gradient(135deg, rgba(84, 110, 122, 0.25), rgba(207, 216, 220, 0.15));
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 2px solid rgba(255,255,255,0.4);
+            border: 2px solid rgba(255, 255, 255, 0.4);
             border-bottom: none;
             color: #263238;
             padding: 18px 20px;
@@ -206,7 +273,7 @@
             background: linear-gradient(135deg, rgba(84, 110, 122, 0.25), rgba(207, 216, 220, 0.15));
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 2px solid rgba(255,255,255,0.4);
+            border: 2px solid rgba(255, 255, 255, 0.4);
             padding: 0;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
             border-radius: 0 0 12px 12px;
@@ -217,7 +284,7 @@
 
         .monitoring-item {
             padding: 13px 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             font-size: 13px;
             font-weight: 600;
             color: #263238;
@@ -225,7 +292,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -238,9 +305,9 @@
         }
 
         .monitoring-item:hover {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             transform: translateX(-4px);
-            box-shadow: inset 0 2px 8px rgba(255,255,255,0.3);
+            box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.3);
         }
 
         .monitoring-item::before {
@@ -271,26 +338,67 @@
         }
 
         /* 层级颜色 */
-        .layer1 { background: linear-gradient(90deg, #E3F2FD 0%, #BBDEFB 100%); border-color: #1976D2; }
-        .layer1 .layer-title { color: #0D47A1; }
-        .layer2 { background: linear-gradient(90deg, #E1F5FE 0%, #B3E5FC 100%); border-color: #0288D1; }
-        .layer2 .layer-title { color: #01579B; }
-        .layer3 { background: linear-gradient(90deg, #E8EAF6 0%, #C5CAE9 100%); border-color: #3949AB; }
-        .layer3 .layer-title { color: #1A237E; }
-        .layer4 { background: linear-gradient(90deg, #E0F7FA 0%, #B2EBF2 100%); border-color: #00ACC1; }
-        .layer4 .layer-title { color: #006064; }
-        .layer5 { background: linear-gradient(90deg, #E0F2F1 0%, #B2DFDB 100%); border-color: #00897B; }
-        .layer5 .layer-title { color: #004D40; }
-        .layer6 { background: linear-gradient(90deg, #EDE7F6 0%, #D1C4E9 100%); border-color: #5E35B1; }
-        .layer6 .layer-title { color: #311B92; }
+        .layer1 {
+            background: linear-gradient(90deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-color: #1976D2;
+        }
+
+        .layer1 .layer-title {
+            color: #0D47A1;
+        }
+
+        .layer2 {
+            background: linear-gradient(90deg, #E1F5FE 0%, #B3E5FC 100%);
+            border-color: #0288D1;
+        }
+
+        .layer2 .layer-title {
+            color: #01579B;
+        }
+
+        .layer3 {
+            background: linear-gradient(90deg, #E8EAF6 0%, #C5CAE9 100%);
+            border-color: #3949AB;
+        }
+
+        .layer3 .layer-title {
+            color: #1A237E;
+        }
+
+        .layer4 {
+            background: linear-gradient(90deg, #E0F7FA 0%, #B2EBF2 100%);
+            border-color: #00ACC1;
+        }
+
+        .layer4 .layer-title {
+            color: #006064;
+        }
+
+        .layer5 {
+            background: linear-gradient(90deg, #E0F2F1 0%, #B2DFDB 100%);
+            border-color: #00897B;
+        }
+
+        .layer5 .layer-title {
+            color: #004D40;
+        }
+
+        .layer6 {
+            background: linear-gradient(90deg, #EDE7F6 0%, #D1C4E9 100%);
+            border-color: #5E35B1;
+        }
+
+        .layer6 .layer-title {
+            color: #311B92;
+        }
 
         .legend {
             margin-top: 20px;
             padding: 18px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.15) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.15) 100%);
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
         }
@@ -325,17 +433,18 @@
             flex-shrink: 0;
         }
 
-        .footer { 
-            text-align: center; 
-            margin-top: 20px; 
-            color: #999; 
-            font-size: 12px; 
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
         }
 
         @media (max-width: 1200px) {
             .architecture-container {
                 flex-direction: column;
             }
+
             .monitoring-panel {
                 width: 100%;
                 min-height: 300px;
@@ -343,175 +452,260 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 class="title">Innovation-kun 系统架构</h1>
         <p class="subtitle">个人形象智能顾问助手 | 功能流程关联版</p>
-        
+
         <div class="architecture-container">
             <div class="main-architecture">
                 <!-- Layer 1: Client -->
                 <div class="layer layer1">
                     <div class="layer-header">
                         <div class="layer-icon">🖥️</div>
-                        <div><div class="layer-title">Layer 1 - 客户端层 (Client Layer)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 1 - 客户端层 (Client Layer)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-try-on">
                             <div class="module-group-title">🔴 虚拟试穿</div>
-                            <div class="module-items"><div>• AR应用</div><div>• MediaPipe</div></div>
+                            <div class="module-items">
+                                <div>• AR应用</div>
+                                <div>• MediaPipe</div>
+                            </div>
                         </div>
                         <div class="module-group flow-generate">
                             <div class="module-group-title">🟢 图像生成</div>
-                            <div class="module-items"><div>• Web前端</div><div>• WebGL</div></div>
+                            <div class="module-items">
+                                <div>• Web前端</div>
+                                <div>• WebGL</div>
+                            </div>
                         </div>
                         <div class="module-group flow-recommend">
                             <div class="module-group-title">🔵 搭配推荐</div>
-                            <div class="module-items"><div>• 推荐页面</div><div>• 列表展示</div></div>
+                            <div class="module-items">
+                                <div>• 推荐页面</div>
+                                <div>• 列表展示</div>
+                            </div>
                         </div>
                         <div class="module-group flow-chat">
                             <div class="module-group-title">🟡 AI对话</div>
-                            <div class="module-items"><div>• 聊天界面</div><div>• 实时消息</div></div>
+                            <div class="module-items">
+                                <div>• 聊天界面</div>
+                                <div>• 实时消息</div>
+                            </div>
                         </div>
                         <div class="module-group flow-user">
                             <div class="module-group-title">🟠 用户中心</div>
-                            <div class="module-items"><div>• 个人档案</div><div>• 衣柜管理</div></div>
+                            <div class="module-items">
+                                <div>• 个人档案</div>
+                                <div>• 衣柜管理</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="connection">多终端统一入口</div>
-                
+
                 <!-- Layer 2: Gateway -->
                 <div class="layer layer2">
                     <div class="layer-header">
                         <div class="layer-icon">🚪</div>
-                        <div><div class="layer-title">Layer 2 - API网关层 (Gateway Layer)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 2 - API网关层 (Gateway Layer)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-common">
                             <div class="module-group-title">统一入口</div>
-                            <div class="module-items"><div>• 认证授权</div><div>• 请求路由</div></div>
+                            <div class="module-items">
+                                <div>• 认证授权</div>
+                                <div>• 请求路由</div>
+                            </div>
                         </div>
                         <div class="module-group flow-common">
                             <div class="module-group-title">流量管理</div>
-                            <div class="module-items"><div>• 限流降级</div><div>• 熔断保护</div></div>
+                            <div class="module-items">
+                                <div>• 限流降级</div>
+                                <div>• 熔断保护</div>
+                            </div>
                         </div>
                         <div class="module-group flow-common">
                             <div class="module-group-title">负载均衡</div>
-                            <div class="module-items"><div>• 服务分发</div><div>• 健康检查</div></div>
+                            <div class="module-items">
+                                <div>• 服务分发</div>
+                                <div>• 健康检查</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="connection">服务转发</div>
-                
+
                 <!-- Layer 3: Microservices -->
                 <div class="layer layer3">
                     <div class="layer-header">
                         <div class="layer-icon">⚙️</div>
-                        <div><div class="layer-title">Layer 3 - 微服务层 (Microservices Layer)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 3 - 微服务层 (Microservices Layer)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-try-on">
                             <div class="module-group-title">🔴 虚拟试穿</div>
-                            <div class="module-items"><div>• 图片预处理</div><div>• 模型推理</div></div>
+                            <div class="module-items">
+                                <div>• 图片预处理</div>
+                                <div>• 模型推理</div>
+                            </div>
                         </div>
                         <div class="module-group flow-generate">
                             <div class="module-group-title">🟢 图像生成</div>
-                            <div class="module-items"><div>• 文本编码</div><div>• 参数调整</div></div>
+                            <div class="module-items">
+                                <div>• 文本编码</div>
+                                <div>• 参数调整</div>
+                            </div>
                         </div>
                         <div class="module-group flow-recommend">
                             <div class="module-group-title">🔵 推荐引擎</div>
-                            <div class="module-items"><div>• 特征计算</div><div>• 排序算法</div></div>
+                            <div class="module-items">
+                                <div>• 特征计算</div>
+                                <div>• 排序算法</div>
+                            </div>
                         </div>
                         <div class="module-group flow-chat">
                             <div class="module-group-title">🟡 AI对话</div>
-                            <div class="module-items"><div>• 意图识别</div><div>• 知识检索</div></div>
+                            <div class="module-items">
+                                <div>• 意图识别</div>
+                                <div>• 知识检索</div>
+                            </div>
                         </div>
                         <div class="module-group flow-user">
                             <div class="module-group-title">🟠 用户服务</div>
-                            <div class="module-items"><div>• 档案管理</div><div>• 权限控制</div></div>
+                            <div class="module-items">
+                                <div>• 档案管理</div>
+                                <div>• 权限控制</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="connection">异步队列 + 缓存</div>
-                
+
                 <!-- Layer 4: Middleware -->
                 <div class="layer layer4">
                     <div class="layer-header">
                         <div class="layer-icon">📨</div>
-                        <div><div class="layer-title">Layer 4 - 中间层 (Message & Cache)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 4 - 中间层 (Message & Cache)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-common">
                             <div class="module-group-title">消息队列</div>
-                            <div class="module-items"><div>• Kafka主题</div><div>• 事件流处理</div></div>
+                            <div class="module-items">
+                                <div>• Kafka主题</div>
+                                <div>• 事件流处理</div>
+                            </div>
                         </div>
                         <div class="module-group flow-common">
                             <div class="module-group-title">缓存系统</div>
-                            <div class="module-items"><div>• Redis集群</div><div>• 热数据缓存</div></div>
+                            <div class="module-items">
+                                <div>• Redis集群</div>
+                                <div>• 热数据缓存</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="connection">数据持久化</div>
-                
+
                 <!-- Layer 5: Storage -->
                 <div class="layer layer5">
                     <div class="layer-header">
                         <div class="layer-icon">💾</div>
-                        <div><div class="layer-title">Layer 5 - 存储层 (Data Storage)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 5 - 存储层 (Data Storage)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-try-on">
                             <div class="module-group-title">🔴 试穿图片</div>
-                            <div class="module-items"><div>• S3存储</div><div>• CDN加速</div></div>
+                            <div class="module-items">
+                                <div>• S3存储</div>
+                                <div>• CDN加速</div>
+                            </div>
                         </div>
                         <div class="module-group flow-generate">
                             <div class="module-group-title">🟢 生成资源</div>
-                            <div class="module-items"><div>• MinIO</div><div>• 版本控制</div></div>
+                            <div class="module-items">
+                                <div>• MinIO</div>
+                                <div>• 版本控制</div>
+                            </div>
                         </div>
                         <div class="module-group flow-recommend">
                             <div class="module-group-title">🔵 推荐数据</div>
-                            <div class="module-items"><div>• Neo4j</div><div>• Milvus</div></div>
+                            <div class="module-items">
+                                <div>• Neo4j</div>
+                                <div>• Milvus</div>
+                            </div>
                         </div>
                         <div class="module-group flow-chat">
                             <div class="module-group-title">🟡 知识库</div>
-                            <div class="module-items"><div>• Elasticsearch</div><div>• 图谱存储</div></div>
+                            <div class="module-items">
+                                <div>• Elasticsearch</div>
+                                <div>• 图谱存储</div>
+                            </div>
                         </div>
                         <div class="module-group flow-user">
                             <div class="module-group-title">🟠 业务数据</div>
-                            <div class="module-items"><div>• PostgreSQL</div><div>• 事务保证</div></div>
+                            <div class="module-items">
+                                <div>• PostgreSQL</div>
+                                <div>• 事务保证</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="connection">模型推理</div>
-                
+
                 <!-- Layer 6: AI Models -->
                 <div class="layer layer6">
                     <div class="layer-header">
                         <div class="layer-icon">🤖</div>
-                        <div><div class="layer-title">Layer 6 - AI模型层 (AI Model)</div></div>
+                        <div>
+                            <div class="layer-title">Layer 6 - AI模型层 (AI Model)</div>
+                        </div>
                     </div>
                     <div class="layer-modules">
                         <div class="module-group flow-try-on">
                             <div class="module-group-title">🔴 虚拟试穿</div>
-                            <div class="module-items"><div>• 扩散模型</div><div>• 姿态估计</div></div>
+                            <div class="module-items">
+                                <div>• 扩散模型</div>
+                                <div>• 姿态估计</div>
+                            </div>
                         </div>
                         <div class="module-group flow-generate">
                             <div class="module-group-title">🟢 文生图</div>
-                            <div class="module-items"><div>• SDXL/Flux</div><div>• 采样策略</div></div>
+                            <div class="module-items">
+                                <div>• SDXL/Flux</div>
+                                <div>• 采样策略</div>
+                            </div>
                         </div>
                         <div class="module-group flow-recommend">
                             <div class="module-group-title">🔵 推荐模型</div>
-                            <div class="module-items"><div>• 多任务学习</div><div>• CTR预测</div></div>
+                            <div class="module-items">
+                                <div>• 多任务学习</div>
+                                <div>• CTR预测</div>
+                            </div>
                         </div>
                         <div class="module-group flow-chat">
                             <div class="module-group-title">🟡 LLM</div>
-                            <div class="module-items"><div>• 对话生成</div><div>• 理解编码</div></div>
+                            <div class="module-items">
+                                <div>• 对话生成</div>
+                                <div>• 理解编码</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -522,31 +716,31 @@
                 <div class="monitoring-header">📊 监控运维</div>
                 <div class="monitoring-content">
                     <div class="monitoring-item">
-                        <strong>Prometheus</strong><br/>
+                        <strong>Prometheus</strong><br />
                         <small>指标采集</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>ELK Stack</strong><br/>
+                        <strong>ELK Stack</strong><br />
                         <small>日志分析</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>Jaeger</strong><br/>
+                        <strong>Jaeger</strong><br />
                         <small>链路追踪</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>Alert</strong><br/>
+                        <strong>Alert</strong><br />
                         <small>告警通知</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>Dashboard</strong><br/>
+                        <strong>Dashboard</strong><br />
                         <small>实时展示</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>Health Check</strong><br/>
+                        <strong>Health Check</strong><br />
                         <small>健康检测</small>
                     </div>
                     <div class="monitoring-item">
-                        <strong>Performance</strong><br/>
+                        <strong>Performance</strong><br />
                         <small>性能分析</small>
                     </div>
                 </div>
@@ -558,27 +752,33 @@
             <div class="legend-title">🎯 功能流程与颜色映射</div>
             <div class="legend-grid">
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #FFE0E0, #FFB3B3); border-left-color: #FF6B6B;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #FFE0E0, #FFB3B3); border-left-color: #FF6B6B;"></div>
                     <div><strong>虚拟试穿流程</strong>：客户端AR → 试穿服务 → 扩散模型 → 图片存储</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #E0F5F3, #B3EEE9); border-left-color: #4ECDC4;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #E0F5F3, #B3EEE9); border-left-color: #4ECDC4;"></div>
                     <div><strong>图像生成流程</strong>：Web前端 → 生成服务 → SDXL/Flux → 资源库</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #E0F7FF, #B3E9FF); border-left-color: #45B7D1;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #E0F7FF, #B3E9FF); border-left-color: #45B7D1;"></div>
                     <div><strong>搭配推荐流程</strong>：推荐页面 → 推荐引擎 → 推荐模型 → 知识图谱</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #FFF9E0, #FFE9B3); border-left-color: #F8B500;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #FFF9E0, #FFE9B3); border-left-color: #F8B500;"></div>
                     <div><strong>AI对话流程</strong>：聊天界面 → 对话服务 → LLM模型 → 知识库</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #E0FFEE, #B3FFD9); border-left-color: #95E1D3;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #E0FFEE, #B3FFD9); border-left-color: #95E1D3;"></div>
                     <div><strong>用户管理流程</strong>：用户中心 → 用户服务 → 业务数据库 → 档案管理</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, #E8F5F5, #D1EFEF); border-left-color: #A8DADC;"></div>
+                    <div class="legend-color"
+                        style="background: linear-gradient(90deg, #E8F5F5, #D1EFEF); border-left-color: #A8DADC;"></div>
                     <div><strong>通用基础</strong>：API网关、消息队列、缓存系统、监控运维支撑所有流程</div>
                 </div>
             </div>
@@ -605,4 +805,5 @@
         document.head.appendChild(style);
     </script>
 </body>
+
 </html>
