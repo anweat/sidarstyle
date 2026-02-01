@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model WardrobeItem {
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  color     String
+  tags      String   // JSON array stored as string
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  outfits   OutfitItem[]
+}
+
+model RecommendationRequest {
+  id          String   @id @default(uuid())
+  occasion    String
+  style       String
+  formality   String
+  comfort     Int
+  budget      String
+  constraints String   // JSON array stored as string
+  createdAt   DateTime @default(now())
+  outfits     Outfit[]
+  feedbacks   Feedback[]
+}
+
+model Outfit {
+  id          String                @id @default(uuid())
+  requestId   String
+  request     RecommendationRequest @relation(fields: [requestId], references: [id])
+  score       Int
+  rationale   String
+  createdAt   DateTime              @default(now())
+  items       OutfitItem[]
+  feedbacks   Feedback[]
+}
+
+model OutfitItem {
+  id             String        @id @default(uuid())
+  outfitId       String
+  outfit         Outfit        @relation(fields: [outfitId], references: [id])
+  wardrobeItemId String
+  wardrobeItem   WardrobeItem  @relation(fields: [wardrobeItemId], references: [id])
+}
+
+model Feedback {
+  id        String                @id @default(uuid())
+  requestId String
+  request   RecommendationRequest @relation(fields: [requestId], references: [id])
+  outfitId  String
+  outfit    Outfit                @relation(fields: [outfitId], references: [id])
+  rating    Int
+  comment   String?
+  selected  Boolean
+  createdAt DateTime              @default(now())
+}
