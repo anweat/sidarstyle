@@ -44,9 +44,11 @@ export function BackendStatus() {
       textAlign: 'center',
       fontWeight: 'bold',
     }}>
-      ⚠️ Backend API is not responding. Please ensure the API server is running on port 3001.
+      注意：后端 API 无响应，请确保 API 服务正在 3001 端口运行。
       <br />
-      <small>Run: <code>cd apps/api && npm run dev</code></small>
+      <small>运行：<code>cd apps/api && npm run dev</code></small>
     </div>
   );
 }
+
+

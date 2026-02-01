@@ -11,11 +11,11 @@ function App() {
         <BackendStatus />
         <nav className="navbar">
           <div className="nav-container">
-            <h1 className="nav-title">Sidarstyle</h1>
+            <h1 className="nav-title">思搭style</h1>
             <ul className="nav-links">
-              <li><Link to="/">Quick Outfit</Link></li>
-              <li><Link to="/wardrobe">Wardrobe</Link></li>
-              <li><Link to="/history">History</Link></li>
+              <li><Link to="/">快速搭配</Link></li>
+              <li><Link to="/wardrobe">衣橱</Link></li>
+              <li><Link to="/history">历史记录</Link></li>
             </ul>
           </div>
         </nav>

@@ -6,6 +6,7 @@ import {
   RecommendationRequestSchema,
   CreateFeedbackSchema,
   type WardrobeItem,
+  type CreateWardrobeItem,
   type Outfit,
 } from '@sidarstyle/shared';
 
@@ -16,6 +17,70 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+const parseJsonArray = (value: string | null | undefined): string[] => {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const normalizeOptionalString = (value?: string | null) => {
+  if (value === undefined || value === null) return null;
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : null;
+};
+
+const toWardrobeItem = (item: any): WardrobeItem => ({
+  id: item.id,
+  name: item.name,
+  category: item.category as WardrobeItem['category'],
+  subcategory: item.subcategory ?? undefined,
+  color: item.color,
+  brand: item.brand ?? undefined,
+  size: item.size ?? undefined,
+  material: item.material ?? undefined,
+  pattern: (item.pattern ?? undefined) as WardrobeItem['pattern'],
+  fit: (item.fit ?? undefined) as WardrobeItem['fit'],
+  season: parseJsonArray(item.season) as WardrobeItem['season'],
+  style: parseJsonArray(item.style) as WardrobeItem['style'],
+  occasion: parseJsonArray(item.occasion) as WardrobeItem['occasion'],
+  condition: (item.condition ?? undefined) as WardrobeItem['condition'],
+  warmth: item.warmth ?? undefined,
+  waterproof: item.waterproof ?? false,
+  price: item.price ?? undefined,
+  purchaseDate: item.purchaseDate ?? undefined,
+  notes: item.notes ?? undefined,
+  tags: parseJsonArray(item.tags),
+  imageUrl: item.imageUrl ?? undefined,
+  createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : item.createdAt,
+});
+
+const toWardrobeItemData = (data: CreateWardrobeItem) => ({
+  name: data.name.trim(),
+  category: data.category,
+  subcategory: normalizeOptionalString(data.subcategory),
+  color: data.color.trim(),
+  brand: normalizeOptionalString(data.brand),
+  size: normalizeOptionalString(data.size),
+  material: normalizeOptionalString(data.material),
+  pattern: data.pattern ?? null,
+  fit: data.fit ?? null,
+  season: JSON.stringify(data.season ?? []),
+  style: JSON.stringify(data.style ?? []),
+  occasion: JSON.stringify(data.occasion ?? []),
+  condition: data.condition ?? null,
+  warmth: data.warmth ?? null,
+  waterproof: data.waterproof ?? false,
+  price: data.price ?? null,
+  purchaseDate: normalizeOptionalString(data.purchaseDate),
+  notes: normalizeOptionalString(data.notes),
+  tags: JSON.stringify(data.tags ?? []),
+  imageUrl: normalizeOptionalString(data.imageUrl),
+});
 
 // Health check (accessible at both /health and /api/health)
 app.get('/health', async (_req: Request, res: Response) => {
@@ -64,10 +129,7 @@ app.get('/api/wardrobe/items', async (_req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
     
-    const formattedItems = items.map(item => ({
-      ...item,
-      tags: JSON.parse(item.tags),
-    }));
+    const formattedItems = items.map(toWardrobeItem);
     
     res.json(formattedItems);
   } catch (error) {
@@ -87,10 +149,7 @@ app.get('/api/wardrobe/items/:id', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Item not found' });
     }
     
-    res.json({
-      ...item,
-      tags: JSON.parse(item.tags),
-    });
+    res.json(toWardrobeItem(item));
   } catch (error) {
     console.error('Error fetching wardrobe item:', error);
     res.status(500).json({ error: 'Failed to fetch wardrobe item' });
@@ -103,15 +162,11 @@ app.post('/api/wardrobe/items', async (req: Request, res: Response) => {
     
     const item = await prisma.wardrobeItem.create({
       data: {
-        ...validatedData,
-        tags: JSON.stringify(validatedData.tags),
+        ...toWardrobeItemData(validatedData),
       },
     });
     
-    res.status(201).json({
-      ...item,
-      tags: JSON.parse(item.tags),
-    });
+    res.status(201).json(toWardrobeItem(item));
   } catch (error: any) {
     console.error('Error creating wardrobe item:', error);
     if (error.name === 'ZodError') {
@@ -129,15 +184,11 @@ app.put('/api/wardrobe/items/:id', async (req: Request, res: Response) => {
     const item = await prisma.wardrobeItem.update({
       where: { id },
       data: {
-        ...validatedData,
-        tags: JSON.stringify(validatedData.tags),
+        ...toWardrobeItemData(validatedData),
       },
     });
     
-    res.json({
-      ...item,
-      tags: JSON.parse(item.tags),
-    });
+    res.json(toWardrobeItem(item));
   } catch (error: any) {
     console.error('Error updating wardrobe item:', error);
     if (error.name === 'ZodError') {
@@ -244,15 +295,7 @@ app.post('/api/recommendations', async (req: Request, res: Response) => {
     
     // Get all wardrobe items
     const allItems = await prisma.wardrobeItem.findMany();
-    const wardrobeItems: WardrobeItem[] = allItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      category: item.category as any,
-      color: item.color,
-      tags: JSON.parse(item.tags),
-      imageUrl: item.imageUrl || undefined,
-      createdAt: item.createdAt.toISOString(),
-    }));
+    const wardrobeItems: WardrobeItem[] = allItems.map(toWardrobeItem);
     
     // Generate 2-3 outfit recommendations
     const outfits: Outfit[] = [];
@@ -480,10 +523,7 @@ app.get('/api/recommendations/history', async (_req: Request, res: Response) => 
       constraints: JSON.parse(req.constraints),
       outfits: req.outfits.map(outfit => ({
         ...outfit,
-        items: outfit.items.map(item => ({
-          ...item.wardrobeItem,
-          tags: JSON.parse(item.wardrobeItem.tags),
-        })),
+        items: outfit.items.map(item => toWardrobeItem(item.wardrobeItem)),
       })),
     }));
     

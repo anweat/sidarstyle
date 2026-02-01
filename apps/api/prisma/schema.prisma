@@ -11,14 +11,29 @@ datasource db {
 }
 
 model WardrobeItem {
-  id        String   @id @default(uuid())
-  name      String
-  category  String
-  color     String
-  tags      String   // JSON array stored as string
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  outfits   OutfitItem[]
+  id           String   @id @default(uuid())
+  name         String
+  category     String
+  subcategory  String?
+  color        String
+  brand        String?
+  size         String?
+  material     String?
+  pattern      String?
+  fit          String?
+  season       String   @default("[]") // JSON array stored as string
+  style        String   @default("[]") // JSON array stored as string
+  occasion     String   @default("[]") // JSON array stored as string
+  condition    String?
+  warmth       Int?
+  waterproof   Boolean  @default(false)
+  price        Float?
+  purchaseDate String?
+  notes        String?
+  tags         String   // JSON array stored as string
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  outfits      OutfitItem[]
 }
 
 model RecommendationRequest {

@@ -180,16 +180,103 @@ body {
   margin-top: 1.5rem;
 }
 
+.wardrobe-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.wardrobe-toolbar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 220px;
+  flex: 1;
+}
+
+.wardrobe-toolbar-group label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.wardrobe-toolbar-group input,
+.wardrobe-toolbar-group select {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.wardrobe-group {
+  margin-top: 1.5rem;
+}
+
+.wardrobe-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.wardrobe-group-count {
+  background: #ecf0f1;
+  color: #34495e;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
 .wardrobe-item-card {
   background: white;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wardrobe-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
 
 .wardrobe-item-card h3 {
   margin-bottom: 0.5rem;
   color: #2c3e50;
+}
+
+.wardrobe-item-photo {
+  height: 180px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #ecf0f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.wardrobe-item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wardrobe-item-photo-placeholder {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+}
+
+.wardrobe-item-meta {
+  font-size: 0.9rem;
+  color: #555;
 }
 
 .wardrobe-item-tags {
@@ -207,10 +294,15 @@ body {
   font-size: 0.875rem;
 }
 
+.tag-muted {
+  background: #7f8c8d;
+}
+
 .item-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
 }
 
 .item-actions button {
@@ -305,6 +397,100 @@ body {
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.wardrobe-detail-modal {
+  max-width: 900px;
+}
+
+.wardrobe-detail {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  gap: 1.5rem;
+}
+
+.wardrobe-detail-media {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ecf0f1;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wardrobe-detail-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wardrobe-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.detail-item-full {
+  grid-column: 1 / -1;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7f8c8d;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f1f2f6;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: #2c3e50;
+}
+
+.checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+@media (max-width: 720px) {
+  .wardrobe-detail {
+    grid-template-columns: 1fr;
+  }
 }
 
 .modal-header {

@@ -1,5 +1,42 @@
 import { useState, useEffect } from 'react';
 
+const FORMALITY_LABELS: Record<string, string> = {
+  casual: '休闲',
+  'business-casual': '商务休闲',
+  'semi-formal': '半正式',
+  formal: '正式',
+};
+
+const BUDGET_LABELS: Record<string, string> = {
+  any: '不限',
+  low: '低',
+  medium: '中',
+  high: '高',
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  top: '上装',
+  bottom: '下装',
+  shoes: '鞋履',
+  accessory: '配饰',
+  outerwear: '外套',
+};
+
+const formatFormalityLabel = (value?: string) => {
+  if (!value) return '未指定';
+  return FORMALITY_LABELS[value] ?? value;
+};
+
+const formatBudgetLabel = (value?: string) => {
+  if (!value) return '未指定';
+  return BUDGET_LABELS[value] ?? value;
+};
+
+const formatCategoryLabel = (value?: string) => {
+  if (!value) return '未指定';
+  return CATEGORY_LABELS[value] ?? value;
+};
+
 interface HistoryRequest {
   id: string;
   occasion: string;
@@ -43,7 +80,7 @@ function History() {
     while (retries < maxRetries) {
       try {
         const response = await fetch('/api/recommendations/history');
-        if (!response.ok) throw new Error('Failed to fetch history');
+        if (!response.ok) throw new Error('加载历史记录失败');
         const data = await response.json();
         setHistory(data);
         setLoading(false);
@@ -51,7 +88,11 @@ function History() {
       } catch (err: any) {
         retries++;
         if (retries >= maxRetries) {
-          setError(`Failed to load history. ${err.message.includes('fetch') ? 'Backend API may not be running on port 3001.' : err.message}`);
+          const isFetchError = typeof err?.message === 'string' && err.message.includes('fetch');
+          const hint = isFetchError
+            ? '后端 API 可能未在 3001 端口运行。'
+            : '请稍后再试。';
+          setError(`加载历史记录失败。${hint}`);
           setLoading(false);
         } else {
           // Exponential backoff: wait 500ms, 1s, 2s
@@ -67,7 +108,7 @@ function History() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('zh-CN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -76,18 +117,18 @@ function History() {
     });
   };
 
-  if (loading) return <div className="loading">Loading history...</div>;
+  if (loading) return <div className="loading">正在加载历史记录...</div>;
 
   return (
     <div>
-      <h1 className="page-title">Recommendation History & Feedback</h1>
+      <h1 className="page-title">推荐历史与反馈</h1>
 
       {error && <div className="error">{error}</div>}
 
       {history.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
           <p style={{ color: '#7f8c8d', fontSize: '1.1rem' }}>
-            No recommendation history yet. Try the Quick Outfit feature to get started!
+            暂无推荐历史，试试「快速搭配」开始吧！
           </p>
         </div>
       ) : (
@@ -98,10 +139,10 @@ function History() {
                 <div>
                   <h3>{request.occasion}</h3>
                   <p style={{ color: '#555' }}>
-                    {request.style} • {request.formality} • Budget: {request.budget}
+                    {request.style} · {formatFormalityLabel(request.formality)} · 预算：{formatBudgetLabel(request.budget)}
                   </p>
                   <p style={{ fontSize: '0.875rem', color: '#7f8c8d' }}>
-                    Comfort: {request.comfort}/10
+                    舒适度：{request.comfort}/10
                   </p>
                 </div>
                 <div className="history-item-date">
@@ -111,7 +152,7 @@ function History() {
 
               {request.constraints && request.constraints.length > 0 && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <strong>Constraints:</strong>
+                  <strong>限制条件：</strong>
                   <div className="wardrobe-item-tags" style={{ marginTop: '0.5rem' }}>
                     {request.constraints.map((constraint, i) => (
                       <span key={i} className="tag">
@@ -123,7 +164,7 @@ function History() {
               )}
 
               <h4 style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
-                Generated Outfits ({request.outfits.length})
+                生成的搭配（{request.outfits.length}）
               </h4>
 
               {request.outfits.map((outfit) => {
@@ -132,16 +173,16 @@ function History() {
                 return (
                   <div key={outfit.id} className="outfit-card" style={{ marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                      <div className="outfit-score">Score: {outfit.score}/100</div>
+                      <div className="outfit-score">评分：{outfit.score}/100</div>
                       {feedback && (
                         <div style={{ textAlign: 'right' }}>
                           {feedback.selected && (
                             <span className="tag" style={{ background: '#2ecc71' }}>
-                              ✓ Selected
+                              已选
                             </span>
                           )}
                           <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#7f8c8d' }}>
-                            Rating: {'⭐'.repeat(feedback.rating)}
+                            评分：{'★'.repeat(feedback.rating)}
                           </div>
                         </div>
                       )}
@@ -152,7 +193,7 @@ function History() {
                         <div key={item.id} className="outfit-item">
                           <strong>{item.name}</strong>
                           <div style={{ fontSize: '0.875rem', color: '#555' }}>
-                            {item.category} • {item.color}
+                            {formatCategoryLabel(item.category)} · {item.color}
                           </div>
                           <div className="wardrobe-item-tags" style={{ marginTop: '0.5rem' }}>
                             {item.tags.map((tag: string, i: number) => (
@@ -166,12 +207,12 @@ function History() {
                     </div>
 
                     <div className="outfit-rationale">
-                      <strong>Rationale:</strong> {outfit.rationale}
+                      <strong>推荐理由：</strong> {outfit.rationale}
                     </div>
 
                     {feedback && feedback.comment && (
                       <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f8f9fa', borderRadius: '4px' }}>
-                        <strong>Your feedback:</strong> {feedback.comment}
+                        <strong>你的反馈：</strong> {feedback.comment}
                       </div>
                     )}
                   </div>
